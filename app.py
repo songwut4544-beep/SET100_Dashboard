@@ -455,9 +455,14 @@ if not df_stocks.empty:
         # 🎯 ชุดโค้ด AI เรดาร์ต้นน้ำ (แทรกก่อนดึงข้อมูลโชว์ในตาราง)
         # ========================================================
         nvdr_df, _ = get_nvdr_smart_money(all_set100_tickers)
-        if 'Net 5D' not in filtered_df.columns and not nvdr_df.empty:
+            # เพิ่มเกราะป้องกัน
+        if nvdr_df is not None and 'Net 5D' in nvdr_df.columns:
+            # (ถ้ามีข้อมูลถึงค่อยทำต่อ)
             filtered_df = pd.merge(filtered_df, nvdr_df[['Symbol', 'Net 5D']], on='Symbol', how='left')
             filtered_df['Net 5D'] = filtered_df['Net 5D'].fillna(0)
+        else:
+            # (ถ้ายังไม่มีข้อมูล ให้สร้างคอลัมน์หลอกขึ้นมาเป็น 0 เพื่อให้โปรแกรมรันผ่าน)
+            filtered_df['Net 5D'] = 0.0
 
         is_price_up = (filtered_df['Change %'] > 0.5) 
         is_nvdr_in = (filtered_df['Net 5D'] > 20.0) 
