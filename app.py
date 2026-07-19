@@ -724,29 +724,17 @@ if not df_stocks.empty:
                 # 1. เปลี่ยนชื่อคอลัมน์ (เพิ่ม 50D, 60D และ %พุ่ง(5D))
                 nvdr_display = nvdr_df.rename(columns={'Symbol': 'หุ้น', 'Thai Name': 'ชื่อไทย', 'NVDR Stage': 'สภาพสถานะ', 'ห่าง High 3M (%)': 'ห่างHighเดิม(%)', 'Net 60D': 'สะสม60D(ลบ.)', 'ราคาเปลี่ยน % 60D': 'ราคา%60D', 'Net 50D': 'สะสม50D(ลบ.)', 'ราคาเปลี่ยน % 50D': 'ราคา%50D', 'Net 40D': 'สะสม40D(ลบ.)', 'ราคาเปลี่ยน % 40D': 'ราคา%40D', 'Net 30D': 'สะสม30D(ลบ.)', 'ราคาเปลี่ยน % 30D': 'ราคา%30D', 'Net 25D': 'สะสม25D(ลบ.)', 'ราคาเปลี่ยน % 25D': 'ราคา%25D', 'Net 20D': 'สะสม20D(ลบ.)', 'ราคาเปลี่ยน % 20D': 'ราคา%20D', 'Net 15D': 'สะสม15D(ลบ.)', 'ราคาเปลี่ยน % 15D': 'ราคา%15D', 'Net 10D': 'สะสม10D(ลบ.)', 'ราคาเปลี่ยน % 10D': 'ราคา%10D', 'Net 5D': 'สะสม5D(ลบ.)', 'ราคาเปลี่ยน % 5D': 'ราคา%5D', '% เทียบเฉลี่ย 5D': '%พุ่ง(5D)', 'ซื้อต่อเนื่อง (Days)': 'ซื้อติดกัน'})
 
-                # 2. จัด Format ตัวเลข
+                # 2. จัด Format ตัวเลข (รวมคอลัมน์ใหม่เข้าในระบบปัดเศษเดิม)
                 format_dict = {col: '{:,.0f}' for col in date_cols + ['สะสม60D(ลบ.)', 'สะสม50D(ลบ.)', 'สะสม40D(ลบ.)', 'สะสม30D(ลบ.)', 'สะสม25D(ลบ.)', 'สะสม20D(ลบ.)', 'สะสม15D(ลบ.)', 'สะสม10D(ลบ.)', 'สะสม5D(ลบ.)']}
                 format_dict.update({col: '{:+.2f}%' for col in ['ราคา%60D', 'ราคา%50D', 'ราคา%40D', 'ราคา%30D', 'ราคา%25D', 'ราคา%20D', 'ราคา%15D', 'ราคา%10D', 'ราคา%5D', '%พุ่ง(5D)']})
                 format_dict.update({'ห่างHighเดิม(%)': '{:.2f}%'})
 
-                # 3. สร้าง Styler และจัด Format เบื้องต้น
-                styled = nvdr_display.style.format(format_dict)
+                # 3. ใส่พื้นหลังไล่สี (Gradient) ตามเงื่อนไขเดิม
+                styled = nvdr_display.style.format(format_dict).background_gradient(subset=date_cols, cmap='RdYlGn', axis=None).background_gradient(subset=['สะสม60D(ลบ.)', 'สะสม50D(ลบ.)', 'สะสม40D(ลบ.)', 'สะสม30D(ลบ.)', 'สะสม25D(ลบ.)', 'สะสม20D(ลบ.)', 'สะสม15D(ลบ.)', 'สะสม10D(ลบ.)', 'สะสม5D(ลบ.)'], cmap='RdYlGn', axis=None)
                 
-                # 4. จำลองสีพื้นหลังและสีตัวอักษร (ทดแทน background_gradient เพื่อหลีกเลี่ยง Error)
-                def apply_color(val):
-                    try:
-                        clean_val = float(str(val).replace(',', '').replace('%', '').replace('+', ''))
-                        if clean_val > 0: 
-                            return 'background-color: rgba(0, 200, 83, 0.2); color: #00C853; font-weight: bold;'
-                        elif clean_val < 0: 
-                            return 'background-color: rgba(255, 23, 68, 0.2); color: #FF1744; font-weight: bold;'
-                    except: 
-                        pass
-                    return ''
-
-                # ระบุคอลัมน์ทั้งหมดที่ต้องการให้ลงสี
-                cols_to_color = date_cols + ['สะสม60D(ลบ.)', 'สะสม50D(ลบ.)', 'สะสม40D(ลบ.)', 'สะสม30D(ลบ.)', 'สะสม25D(ลบ.)', 'สะสม20D(ลบ.)', 'สะสม15D(ลบ.)', 'สะสม10D(ลบ.)', 'สะสม5D(ลบ.)', 'ราคา%60D', 'ราคา%50D', 'ราคา%40D', 'ราคา%30D', 'ราคา%25D', 'ราคา%20D', 'ราคา%15D', 'ราคา%10D', 'ราคา%5D', '%พุ่ง(5D)']
-                styled = styled.map(apply_color, subset=cols_to_color)
+                # 4. ใส่สีตัวหนังสือ (เขียว/แดง)
+                for col in ['ราคา%60D', 'ราคา%50D', 'ราคา%40D', 'ราคา%30D', 'ราคา%25D', 'ราคา%20D', 'ราคา%15D', 'ราคา%10D', 'ราคา%5D', '%พุ่ง(5D)']: 
+                    styled = styled.map(lambda val: 'color: #00C853; font-weight: bold;' if val > 0 else 'color: #FF1744; font-weight: bold;' if val < 0 else '', subset=[col])
 
                 # 5. ใส่สีไฮไลท์เงื่อนไขพิเศษ (ของเดิมที่ดึงกลับมาครบ 100%)
                 styled = styled.map(lambda val: 'background-color: #00C853; color: black; font-weight: bold;' if val >= 3 else '', subset=['ซื้อติดกัน'])\
