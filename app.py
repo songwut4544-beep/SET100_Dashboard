@@ -455,9 +455,17 @@ if not df_stocks.empty:
         # 🎯 ชุดโค้ด AI เรดาร์ต้นน้ำ (แทรกก่อนดึงข้อมูลโชว์ในตาราง)
         # ========================================================
         nvdr_df, _ = get_nvdr_smart_money(all_set100_tickers)
-        if 'Net 5D' not in filtered_df.columns and not nvdr_df.empty:
-            filtered_df = pd.merge(filtered_df, nvdr_df[['Symbol', 'Net 5D']], on='Symbol', how='left')
-            filtered_df['Net 5D'] = filtered_df['Net 5D'].fillna(0)
+        
+        # ป้องกัน KeyError: ตรวจสอบและสร้างคอลัมน์ 'Net 5D' เสมอ
+        if 'Net 5D' not in filtered_df.columns:
+            if not nvdr_df.empty and 'Net 5D' in nvdr_df.columns:
+                filtered_df = pd.merge(filtered_df, nvdr_df[['Symbol', 'Net 5D']], on='Symbol', how='left')
+            else:
+                # ถ้า API ล่ม หรือไม่มีข้อมูล NVDR ให้สร้างคอลัมน์ใส่ 0 แทนเพื่อไม่ให้ระบบพัง
+                filtered_df['Net 5D'] = 0.0
+        
+        # จัดการค่า NaN เผื่อหุ้นบางตัวไม่มีข้อมูล NVDR
+        filtered_df['Net 5D'] = filtered_df['Net 5D'].fillna(0.0)
 
         is_price_up = (filtered_df['Change %'] > 0.5) 
         is_nvdr_in = (filtered_df['Net 5D'] > 20.0) 
@@ -469,7 +477,9 @@ if not df_stocks.empty:
         filtered_df['🎯 เรดาร์ต้นน้ำ'] = np.select(conditions, choices, default="-")
 
         display_df = filtered_df[['Sign', 'Symbol', '🎯 เรดาร์ต้นน้ำ', 'Thai Name', 'Prev Close', 'Change %', 'Close', 'Vol (MB)', 'Dist to High %', 'Vol In Up', 'Vol In Sideway', 'Price (5D)', 'Vol (5D)', 'V-5%', 'V-4%', 'V-3%', 'V-2%', 'V-1%', 'Vol Trend (5D)', 'Trend', 'Stage', 'MACD', 'MACD Trend', 'RSI', 'RSI Trend', 'Market Cap (M)', 'PE', 'PBV', 'ROE %', 'ROA %', 'Div Yield %']]
-        if search_symbol and search_symbol != "AUDJPY" and not any(x in search_symbol for x in GLOBAL_ASSET_GROUPS.keys()): display_df = display_df[display_df['Symbol'].str.contains(search_symbol, na=False)]
+        
+        if search_symbol and search_symbol != "AUDJPY" and not any(x in search_symbol for x in GLOBAL_ASSET_GROUPS.keys()): 
+            display_df = display_df[display_df['Symbol'].str.contains(search_symbol, na=False)]
 
         display_df = display_df.rename(columns={
             'Symbol': 'หุ้น', 'Thai Name': 'ชื่อไทย', 'Prev Close': 'ปิดก่อน', 'Change %': 'เปลี่ยน%', 'Close': 'ล่าสุด', 
