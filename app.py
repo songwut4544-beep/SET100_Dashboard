@@ -105,48 +105,63 @@ with st.sidebar:
     st.divider()
 
 # --------------------------------------------------------
-# 📌 ฐานข้อมูล SET100 (อัปเดตล่าสุด 100 ตัว)
+# 📌 ฐานข้อมูลรายชื่อหุ้น (อัปเดตตามมูลค่าซื้อขาย > 20M ล่าสุด)
 # --------------------------------------------------------
 SET100_SECTORS = {
-    "Energy & Utilities": ['BANPU', 'BCP', 'BCPG', 'BGRIM', 'EA', 'EGCO', 'GPSC', 'GULF', 'GUNKUL', 'IRPC', 'OR', 'PTG', 'PTT', 'PTTEP', 'RATCH', 'SPRC', 'TOP', 'WHAUP'],
-    "Banking": ['BBL', 'KBANK', 'KKP', 'KTB', 'SCB', 'TCAP', 'TISCO', 'TTB'],
-    "Commerce": ['AURA', 'BJC', 'COM7', 'CPALL', 'CRC', 'DOHOME', 'GLOBAL', 'HMPRO', 'MEGA', 'MOSHI', 'MRDIYT'],
-    "Finance & Securities": ['AEONTS', 'BAM', 'BLA', 'JMT', 'KTC', 'MTC', 'SAWAD', 'TIDLOR', 'TLI'],
-    "Property & Construction": ['AMATA', 'AP', 'AWC', 'CK', 'CPN', 'LH', 'QH', 'SIRI', 'SPALI', 'STECON', 'TOA', 'WHA'],
-    "Transportation & Logistics": ['AAV', 'AOT', 'BA', 'BEM', 'BTS', 'PRM', 'RCL', 'THAI'],
-    "ICT & Media": ['ADVANC', 'JMART', 'PLANB', 'THCOM', 'TRUE', 'VGI'],
-    "Health Care Services": ['BCH', 'BDMS', 'BH', 'CHG', 'PR9'],
-    "Food & Beverage": ['BTG', 'CBG', 'CPF', 'GFPT', 'ICHI', 'M', 'OSP', 'TFG', 'TU'],
-    "Petro, Materials & Agri": ['IVL', 'PTTGC', 'SCC', 'SCGP', 'STA', 'STGT', 'TASCO'],
+    "Energy & Utilities": ['BANPU', 'BCP', 'BCPG', 'BGRIM', 'CKP', 'EA', 'EASTW', 'EGCO', 'GPSC', 'GULF', 'GUNKUL', 'IRPC', 'OR', 'PSP', 'PTG', 'PTT', 'PTTEP', 'RATCH', 'SPRC', 'TGE', 'TOP', 'TPIPP', 'TTW', 'WHAUP'],
+    "Banking": ['BAY', 'BBL', 'CREDIT', 'KBANK', 'KKP', 'KTB', 'SCB', 'TCAP', 'TISCO', 'TTB'],
+    "Commerce": ['ADVICE', 'AURA', 'BEAUTY', 'BJC', 'COM7', 'CPALL', 'CPAXT', 'CRC', 'DOHOME', 'GLOBAL', 'HMPRO', 'IT', 'MAGURO', 'MEGA', 'MGC', 'MOSHI', 'MRDIYT', 'SINGER', 'SYNEX'],
+    "Finance & Securities": ['AEONTS', 'ASK', 'BAM', 'BLA', 'JMT', 'KTC', 'MTC', 'NCAP', 'SAWAD', 'SCAP', 'SGC', 'THANI', 'TIDLOR', 'TLI', 'TURBO', 'XPG'],
+    "Property & Construction": ['AMATA', 'AP', 'AWC', 'BLAND', 'CK', 'CPN', 'LH', 'MBK', 'ROJNA', 'SIRI', 'SPALI', 'STECON', 'STPI', 'TOA', 'TPIPL', 'WHA'],
+    "Transportation & Logistics": ['AAV', 'AOT', 'BA', 'BEM', 'BTS', 'PRM', 'PSL', 'RCL', 'SAV', 'SJWD', 'THAI'],
+    "ICT & Media": ['ADVANC', 'BBIK', 'DITTO', 'FORTH', 'FSMART', 'INSET', 'ITEL', 'JMART', 'LTS', 'NETBAY', 'PLANB', 'SKY', 'TEAMG', 'THCOM', 'TRUE', 'VGI'],
+    "Health Care Services": ['BCH', 'BDMS', 'BH', 'CHG', 'KLINIQ', 'PR9', 'SKR', 'THG'],
+    "Food & Beverage": ['BTG', 'CBG', 'CPF', 'GFPT', 'ICHI', 'ITC', 'M', 'OSP', 'TACC', 'TFG', 'TU'],
+    "Petro, Materials & Agri": ['EPG', 'IVL', 'NER', 'PTTGC', 'SALEE', 'SCC', 'SCGP', 'STA', 'STGT', 'TASCO', 'TRT'],
     "Tourism & Leisure": ['CENTEL', 'ERW', 'MINT'],
-    "Electronics": ['CCET', 'DELTA', 'HANA', 'KCE']
+    "Electronics": ['CCET', 'DELTA', 'HANA', 'KCE', 'SIS', 'SMT', 'SVOA'],
+    "Services & Others": ['KGEN', 'NEX', 'SISB']
 }
 
 THAI_NAMES = {
     # Energy & Utilities
-    'BANPU': 'บ้านปู', 'BCP': 'บางจาก', 'BCPG': 'บีซีพีจี', 'BGRIM': 'บี.กริม', 'EA': 'พลังงานบริสุทธิ์', 'EGCO': 'เอ็กโก', 'GPSC': 'โกลบอล เพาเวอร์', 'GULF': 'กัลฟ์', 'GUNKUL': 'กันกุล', 'IRPC': 'ไออาร์พีซี', 'OR': 'โออาร์', 'PTG': 'พีทีจี', 'PTT': 'ปตท.', 'PTTEP': 'ปตท.สผ.', 'RATCH': 'ราช กรุ๊ป', 'SPRC': 'สตาร์ ปิโตรเลียม', 'TOP': 'ไทยออยล์', 'WHAUP': 'ดับบลิวเอชเอ ยูทิลิตี้ส์',
+    'BANPU': 'บ้านปู', 'BCP': 'บางจาก', 'BCPG': 'บีซีพีจี', 'BGRIM': 'บี.กริม', 'CKP': 'ซีเค พาวเวอร์', 'EA': 'พลังงานบริสุทธิ์', 'EASTW': 'จัดการและพัฒนาทรัพยากรน้ำ', 'EGCO': 'เอ็กโก', 'GPSC': 'โกลบอล เพาเวอร์', 'GULF': 'กัลฟ์', 'GUNKUL': 'กันกุล', 'IRPC': 'ไออาร์พีซี', 'OR': 'โออาร์', 'PSP': 'พี.เอส.พี.', 'PTG': 'พีทีจี', 'PTT': 'ปตท.', 'PTTEP': 'ปตท.สผ.', 'RATCH': 'ราช กรุ๊ป', 'SPRC': 'สตาร์ ปิโตรเลียม', 'TGE': 'ท่าฉาง กรีน', 'TOP': 'ไทยออยล์', 'TPIPP': 'ทีพีไอ โพลีน เพาเวอร์', 'TTW': 'ทีทีดับบลิว', 'WHAUP': 'ดับบลิวเอชเอ ยูทิลิตี้ส์',
+    
     # Banking
-    'BBL': 'แบงก์กรุงเทพ', 'KBANK': 'กสิกรไทย', 'KKP': 'เกียรตินาคินภัทร', 'KTB': 'กรุงไทย', 'SCB': 'เอสซีบี เอกซ์', 'TCAP': 'ทุนธนชาต', 'TISCO': 'ทิสโก้', 'TTB': 'ทีเอ็มบีธนชาต',
+    'BAY': 'กรุงศรีอยุธยา', 'BBL': 'แบงก์กรุงเทพ', 'CREDIT': 'ธนาคารไทยเครดิต', 'KBANK': 'กสิกรไทย', 'KKP': 'เกียรตินาคินภัทร', 'KTB': 'กรุงไทย', 'SCB': 'เอสซีบี เอกซ์', 'TCAP': 'ทุนธนชาต', 'TISCO': 'ทิสโก้', 'TTB': 'ทีเอ็มบีธนชาต',
+    
     # Commerce
-    'AURA': 'ออโรร่า', 'BJC': 'เบอร์ลี่ ยุคเกอร์', 'COM7': 'คอมเซเว่น', 'CPALL': 'ซีพี ออลล์', 'CRC': 'เซ็นทรัล รีเทล', 'DOHOME': 'ดูโฮม', 'GLOBAL': 'สยามโกลบอล', 'HMPRO': 'โฮมโปร', 'MEGA': 'เมก้า ไลฟ์ไซแอ็นซ์', 'MOSHI': 'โมชิ โมชิ', 'MRDIYT': 'มิสเตอร์ ดี.ไอ.วาย.',
+    'ADVICE': 'แอดไวซ์', 'AURA': 'ออโรร่า', 'BEAUTY': 'บิวตี้', 'BJC': 'เบอร์ลี่ ยุคเกอร์', 'COM7': 'คอมเซเว่น', 'CPALL': 'ซีพี ออลล์', 'CPAXT': 'ซีพี แอ็กซ์ตร้า', 'CRC': 'เซ็นทรัล รีเทล', 'DOHOME': 'ดูโฮม', 'GLOBAL': 'สยามโกลบอล', 'HMPRO': 'โฮมโปร', 'IT': 'ไอที ซิตี้', 'MAGURO': 'มากุโระ', 'MEGA': 'เมก้า ไลฟ์ไซแอ็นซ์', 'MGC': 'มิลเลนเนียม กรุ๊ป', 'MOSHI': 'โมชิ โมชิ', 'MRDIYT': 'มิสเตอร์ ดี.ไอ.วาย.', 'SINGER': 'ซิงเกอร์', 'SYNEX': 'ซินเน็ค',
+    
     # Finance & Securities
-    'AEONTS': 'อิออน ธนสินทรัพย์', 'BAM': 'บริหารสินทรัพย์', 'BLA': 'กรุงเทพประกันชีวิต', 'JMT': 'เจเอ็มที', 'KTC': 'บัตรกรุงไทย', 'MTC': 'เมืองไทย แคปปิตอล', 'SAWAD': 'ศรีสวัสดิ์', 'TIDLOR': 'ติดล้อ', 'TLI': 'ไทยประกันชีวิต',
+    'AEONTS': 'อิออน ธนสินทรัพย์', 'ASK': 'เอเซียเสริมกิจ', 'BAM': 'บริหารสินทรัพย์', 'BLA': 'กรุงเทพประกันชีวิต', 'JMT': 'เจเอ็มที', 'KTC': 'บัตรกรุงไทย', 'MTC': 'เมืองไทย แคปปิตอล', 'NCAP': 'เน็คซ์ แคปปิตอล', 'SAWAD': 'ศรีสวัสดิ์', 'SCAP': 'ศรีสวัสดิ์ แคปปิตอล', 'SGC': 'เอสจี แคปปิตอล', 'THANI': 'ราชธานีลิสซิ่ง', 'TIDLOR': 'ติดล้อ', 'TLI': 'ไทยประกันชีวิต', 'TURBO': 'เงินเทอร์โบ', 'XPG': 'เอ็กซ์สปริง',
+    
     # Property & Construction
-    'AMATA': 'อมตะ', 'AP': 'เอพี', 'AWC': 'แอสเสท เวิรด์', 'CK': 'ช.การช่าง', 'CPN': 'เซ็นทรัลพัฒนา', 'LH': 'แลนด์แอนด์เฮ้าส์', 'QH': 'ควอลิตี้เฮ้าส์', 'SIRI': 'แสนสิริ', 'SPALI': 'ศุภาลัย', 'STECON': 'ซิโน-ไทย', 'TOA': 'ทีโอเอ เพ้นท์', 'WHA': 'ดับบลิวเอชเอ',
+    'AMATA': 'อมตะ', 'AP': 'เอพี', 'AWC': 'แอสเสท เวิรด์', 'BLAND': 'บางกอกแลนด์', 'CK': 'ช.การช่าง', 'CPN': 'เซ็นทรัลพัฒนา', 'LH': 'แลนด์แอนด์เฮ้าส์', 'MBK': 'เอ็มบีเค', 'ROJNA': 'สวนอุตสาหกรรมโรจนะ', 'SIRI': 'แสนสิริ', 'SPALI': 'ศุภาลัย', 'STECON': 'ซิโน-ไทย', 'STPI': 'เอสทีพี แอนด์ ไอ', 'TOA': 'ทีโอเอ เพ้นท์', 'TPIPL': 'ทีพีไอ โพลีน', 'WHA': 'ดับบลิวเอชเอ',
+    
     # Transportation & Logistics
-    'AAV': 'เอเชีย เอวิเอชั่น', 'AOT': 'ท่าอากาศยานไทย', 'BA': 'การบินกรุงเทพ', 'BEM': 'ทางด่วนและรถไฟฟ้า', 'BTS': 'บีทีเอส', 'PRM': 'พริมา มารีน', 'RCL': 'อาร์ ซี แอล', 'THAI': 'การบินไทย',
+    'AAV': 'เอเชีย เอวิเอชั่น', 'AOT': 'ท่าอากาศยานไทย', 'BA': 'การบินกรุงเทพ', 'BEM': 'ทางด่วนและรถไฟฟ้า', 'BTS': 'บีทีเอส', 'PRM': 'พริมา มารีน', 'PSL': 'พรีเชียส', 'RCL': 'อาร์ ซี แอล', 'SAV': 'สามารถ เอวิเอชั่น', 'SJWD': 'เอสซีจี เจดับเบิ้ลยูดี', 'THAI': 'การบินไทย',
+    
     # ICT & Media
-    'ADVANC': 'แอดวานซ์', 'JMART': 'เจมาร์ท กรุ๊ป', 'PLANB': 'แพลน บี มีเดีย', 'THCOM': 'ไทยคม', 'TRUE': 'ทรู', 'VGI': 'วีจีไอ',
+    'ADVANC': 'แอดวานซ์', 'BBIK': 'บลูบิค', 'DITTO': 'ดิทโต้', 'FORTH': 'ฟอร์ท คอร์ปอเรชั่น', 'FSMART': 'ฟอร์ท สมาร์ท', 'INSET': 'อินฟราเซท', 'ITEL': 'อินเตอร์ลิ้งค์ เทเลคอม', 'JMART': 'เจมาร์ท กรุ๊ป', 'LTS': 'ไลท์อัพ', 'NETBAY': 'เน็ตเบย์', 'PLANB': 'แพลน บี มีเดีย', 'SKY': 'สกาย ไอซีที', 'TEAMG': 'ทีม คอนซัลติ้ง', 'THCOM': 'ไทยคม', 'TRUE': 'ทรู', 'VGI': 'วีจีไอ',
+    
     # Health Care Services
-    'BCH': 'บางกอก เชน', 'BDMS': 'กรุงเทพดุสิตเวชการ', 'BH': 'บำรุงราษฎร์', 'CHG': 'จุฬารัตน์', 'PR9': 'พระรามเก้า',
+    'BCH': 'บางกอก เชน', 'BDMS': 'กรุงเทพดุสิตเวชการ', 'BH': 'บำรุงราษฎร์', 'CHG': 'จุฬารัตน์', 'KLINIQ': 'เดอะ คลีนิกค์', 'PR9': 'พระรามเก้า', 'SKR': 'ศิครินทร์', 'THG': 'ธนบุรี เฮลท์แคร์',
+    
     # Food & Beverage
-    'BTG': 'เบทาโกร', 'CBG': 'คาราบาว', 'CPF': 'เจริญโภคภัณฑ์อาหาร', 'GFPT': 'จีเอฟพีที', 'ICHI': 'อิชิตัน', 'M': 'เอ็มเค สุกี้', 'OSP': 'โอสถสภา', 'TFG': 'ไทยฟู้ดส์', 'TU': 'ไทยยูเนี่ยน',
+    'BTG': 'เบทาโกร', 'CBG': 'คาราบาว', 'CPF': 'เจริญโภคภัณฑ์อาหาร', 'GFPT': 'จีเอฟพีที', 'ICHI': 'อิชิตัน', 'ITC': 'ไอ-เทล', 'M': 'เอ็มเค สุกี้', 'OSP': 'โอสถสภา', 'TACC': 'ที.เอ.ซี.', 'TFG': 'ไทยฟู้ดส์', 'TU': 'ไทยยูเนี่ยน',
+    
     # Petro, Materials & Agri
-    'IVL': 'อินโดรามา', 'PTTGC': 'พีทีที โกลบอล', 'SCC': 'ปูนซิเมนต์ไทย', 'SCGP': 'เอสซีจี แพคเกจจิ้ง', 'STA': 'ศรีตรังแอโกร', 'STGT': 'ศรีตรังโกลฟส์', 'TASCO': 'ทิปโก้แอสฟัลท์',
+    'EPG': 'อีสเทิร์นโพลีเมอร์', 'IVL': 'อินโดรามา', 'NER': 'นอร์ทอีส รับเบอร์', 'PTTGC': 'พีทีที โกลบอล', 'SALEE': 'สาลี่อุตสาหกรรม', 'SCC': 'ปูนซิเมนต์ไทย', 'SCGP': 'เอสซีจี แพคเกจจิ้ง', 'STA': 'ศรีตรังแอโกร', 'STGT': 'ศรีตรังโกลฟส์', 'TASCO': 'ทิปโก้แอสฟัลท์', 'TRT': 'ถิรไทย',
+    
     # Tourism & Leisure
     'CENTEL': 'เซ็นทรัลพลาซา', 'ERW': 'ดิ เอราวัณ', 'MINT': 'ไมเนอร์',
+    
     # Electronics
-    'CCET': 'แคล-คอมพ์', 'DELTA': 'เดลต้า', 'HANA': 'ฮานา', 'KCE': 'เคซีอี'
+    'CCET': 'แคล-คอมพ์', 'DELTA': 'เดลต้า', 'HANA': 'ฮานา', 'KCE': 'เคซีอี', 'SIS': 'เอสไอเอส', 'SMT': 'สตาร์ ไมโครอิเล็กทรอนิกส์', 'SVOA': 'เอสวีโอเอ',
+    
+    # Services & Others
+    'KGEN': 'คิง เจน', 'NEX': 'เน็กซ์ พอยท์', 'SISB': 'เอสไอเอสบี'
 }
 
 ticker_to_sector = {}
@@ -478,8 +493,8 @@ if not df_stocks.empty:
 
         display_df = filtered_df[['Sign', 'Symbol', '🎯 เรดาร์ต้นน้ำ', 'Thai Name', 'Prev Close', 'Change %', 'Close', 'Vol (MB)', 'Dist to High %', 'Vol In Up', 'Vol In Sideway', 'Price (5D)', 'Vol (5D)', 'V-5%', 'V-4%', 'V-3%', 'V-2%', 'V-1%', 'Vol Trend (5D)', 'Trend', 'Stage', 'MACD', 'MACD Trend', 'RSI', 'RSI Trend', 'Market Cap (M)', 'PE', 'PBV', 'ROE %', 'ROA %', 'Div Yield %']]
         
-        if search_symbol and search_symbol != "AUDJPY" and not any(x in search_symbol for x in GLOBAL_ASSET_GROUPS.keys()): 
-            display_df = display_df[display_df['Symbol'].str.contains(search_symbol, na=False)]
+        if search_symbol:
+            display_df = display_df[display_df['Symbol'].str.contains(search_symbol, case=False, na=False)]
 
         display_df = display_df.rename(columns={
             'Symbol': 'หุ้น', 'Thai Name': 'ชื่อไทย', 'Prev Close': 'ปิดก่อน', 'Change %': 'เปลี่ยน%', 'Close': 'ล่าสุด', 
