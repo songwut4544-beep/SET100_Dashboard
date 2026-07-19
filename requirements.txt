@@ -5,3 +5,5 @@ numpy
 ta
 plotly
 requests
+Plaintext
+matplotlib
