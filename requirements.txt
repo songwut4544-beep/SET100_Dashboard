@@ -1,5 +1,6 @@
 streamlit
-yfinance
+yfinance>=0.2.37
+requests-ratelimiter
 pandas
 numpy
 ta
