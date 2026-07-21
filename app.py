@@ -48,10 +48,15 @@ with st.sidebar:
                     
                     if not file_date:
                         file_date = datetime.today().strftime('%Y-%m-%d')
-                    
+
                     # 2. อ่านข้อมูลตาราง (ข้าม 6 บรรทัดแรก)
                     uploaded_file.seek(0)
-                    df_single = pd.read_csv(uploaded_file, skiprows=6)
+                    
+                    # 🌟 แก้ไขจุดที่ 1: เพิ่ม encoding='utf-8-sig' ป้องกันอักขระขยะจากมือถือ
+                    df_single = pd.read_csv(uploaded_file, skiprows=6, encoding='utf-8-sig')
+                    
+                    # 🌟 แก้ไขจุดที่ 2: ลบช่องว่างส่วนเกินหน้า-หลังชื่อคอลัมน์ทั้งหมด
+                    df_single.columns = df_single.columns.str.strip()
                     
                     if 'Unnamed: 0' in df_single.columns:
                         df_single = df_single.rename(columns={
