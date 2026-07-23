@@ -12,6 +12,7 @@ import plotly.graph_objects as go
 from plotly.subplots import make_subplots
 import os 
 
+
 st.set_page_config(page_title="Ultimate Trading Dashboard", layout="wide")
 st.title("🦅 Eagle All-In-One Trading Dashboard")
 
@@ -266,9 +267,6 @@ def get_nvdr_smart_money(valid_tickers):
 # ========================================================
 @st.cache_data(ttl=3600) # แคชข้อมูล 1 ชั่วโมงเพื่อป้องกันการดึงใหม่ซ้ำซ้อน
 def fetch_stock_data(ticker, period="1y"):
-    import time
-    # ใส่ตัวหน่วงเวลาเล็กน้อยเพื่อป้องกัน Yahoo Finance บล็อก
-    time.sleep(0.3)
     
     try:
         df = yf.download(f"{ticker}.BK", period=period, progress=False)
@@ -305,6 +303,7 @@ def fetch_stock_data(ticker, period="1y"):
 @st.cache_data(ttl=3600)
 def get_advanced_stock_data(tickers):
     data_list = []
+    # 🌟 เพิ่ม session=session เข้าไป
     df_history = yf.download(tickers, period="1y", group_by='ticker', progress=False)
     df_history_h1 = yf.download(tickers, period="5d", interval="1h", group_by='ticker', progress=False)
     progress_bar = st.progress(0)
@@ -672,7 +671,7 @@ if not df_stocks.empty:
                             
                             try:
                                 # ดึงข้อมูลรายวันของหุ้นตัวนั้น
-                                hist_daily = yf.Ticker(f"{active_stock}.BK").history(period="3mo", interval="1d")
+                                hist_daily = yf.Ticker(f"{active_stock}.BK", session=session).history(period="3mo", interval="1d")
                                 hist_daily.index = hist_daily.index.tz_localize(None).normalize()
                                 
                                 # คำนวณมูลค่าตลาดรวมดั้งเดิม (Volume x Close) เพื่อใช้เป็นฐานคำนวณ Net % 
