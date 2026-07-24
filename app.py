@@ -10,7 +10,13 @@ import time
 import requests
 import plotly.graph_objects as go
 from plotly.subplots import make_subplots
-import os 
+import os
+custom_session = requests.Session()
+custom_session.headers.update({
+    'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36'
+})
+
+st.set_page_config(page_title="Ultimate Trading Dashboard", layout="wide") 
 
 
 st.set_page_config(page_title="Ultimate Trading Dashboard", layout="wide")
@@ -201,7 +207,7 @@ def get_nvdr_smart_money(valid_tickers):
     pivot_df['Net 60D'] = pivot_df[dates_sorted[0:min(60, len(dates_sorted))]].sum(axis=1)
 
     try:
-        hist = yf.download([f"{s}.BK" for s in pivot_df.index], period="3mo", progress=False)
+        hist = yf.download([f"{s}.BK" for s in pivot_df.index], period="3mo", progress=False, session=custom_session)
         hist_close = hist['Close'] if isinstance(hist.columns, pd.MultiIndex) else hist[['Close']]
         hist_high = hist['High'] if isinstance(hist.columns, pd.MultiIndex) else hist[['High']]
 
@@ -269,7 +275,7 @@ def get_nvdr_smart_money(valid_tickers):
 def fetch_stock_data(ticker, period="1y"):
     
     try:
-        df = yf.download(f"{ticker}.BK", period=period, progress=False)
+        df = yf.download(f"{ticker}.BK", period=period, progress=False, session=custom_session)
         if df.empty or len(df) < 20: 
             return None
         
@@ -304,8 +310,8 @@ def fetch_stock_data(ticker, period="1y"):
 def get_advanced_stock_data(tickers):
     data_list = []
     # 🌟 เพิ่ม session=session เข้าไป
-    df_history = yf.download(tickers, period="1y", group_by='ticker', progress=False, threads=False)
-    df_history_h1 = yf.download(tickers, period="5d", interval="1h", group_by='ticker', progress=False, threads=False)
+    df_history = yf.download(tickers, period="1y", group_by='ticker', progress=False, threads=False, session=custom_session)
+    df_history_h1 = yf.download(tickers, period="5d", interval="1h", group_by='ticker', progress=False, threads=False, session=custom_session)
     progress_bar = st.progress(0)
     status_text = st.empty()
     now_ts = time.time()
@@ -438,7 +444,7 @@ def get_global_indices():
     all_tickers = [t for group in indices_groups.values() for t in group.keys()]
     
     try:
-        hist = yf.download(all_tickers, period="5d", group_by='ticker', progress=False)
+        hist = yf.download(all_tickers, period="5d", group_by='ticker', progress=False, session=custom_session)
         for group_name, tickers in indices_groups.items():
             group_list = []
             for ticker, name in tickers.items():
