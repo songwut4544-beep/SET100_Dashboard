@@ -304,8 +304,8 @@ def fetch_stock_data(ticker, period="1y"):
 def get_advanced_stock_data(tickers):
     data_list = []
     # 🌟 เพิ่ม session=session เข้าไป
-    df_history = yf.download(tickers, period="1y", group_by='ticker', progress=False)
-    df_history_h1 = yf.download(tickers, period="5d", interval="1h", group_by='ticker', progress=False)
+    df_history = yf.download(tickers, period="1y", group_by='ticker', progress=False, threads=False)
+    df_history_h1 = yf.download(tickers, period="5d", interval="1h", group_by='ticker', progress=False, threads=False)
     progress_bar = st.progress(0)
     status_text = st.empty()
     now_ts = time.time()
@@ -386,14 +386,22 @@ def get_advanced_stock_data(tickers):
                 rsi_status = f"ตัดขึ้น 50 ({c}D)" if is_up else f"ตัดลง 50 ({c}D)"
             else: rsi_status = "-"
 
-            tk = yf.Ticker(ticker)
-            info = tk.info
-            div_yield = info.get('dividendYield', 0) or 0
-            ex_div_timestamp = info.get('exDividendDate', None)
-            market_cap = info.get('marketCap', 0) or 0
-            pbv = info.get('priceToBook', 0) or 0
-            roe = info.get('returnOnEquity', 0) or 0
-            roa = info.get('returnOnAssets', 0) or 0
+            # tk = yf.Ticker(ticker)
+            # info = tk.info
+            # div_yield = info.get('dividendYield', 0) or 0
+            # ex_div_timestamp = info.get('exDividendDate', None)
+            # market_cap = info.get('marketCap', 0) or 0
+            # pbv = info.get('priceToBook', 0) or 0
+            # roe = info.get('returnOnEquity', 0) or 0
+            # roa = info.get('returnOnAssets', 0) or 0
+
+            # ✅ พิมพ์โค้ดชุดใหม่นี้เข้าไปแทนที่เพื่อกำหนดค่าเริ่มต้นเป็น 0 ไม่ให้ตารางพัง
+            div_yield = 0
+            ex_div_timestamp = None
+            market_cap = 0
+            pbv = 0
+            roe = 0
+            roa = 0
             
             data_list.append({
                 "Symbol": symbol, "Thai Name": THAI_NAMES.get(symbol, "-"), "Sector": ticker_to_sector.get(symbol, "Others"), "Sign": "XD" if ex_div_timestamp and ex_div_timestamp > now_ts else "", 
@@ -1015,3 +1023,6 @@ if not df_stocks.empty:
                 else:
                     st.write("ยังไม่พบสัญญาณหุ้นกลับตัวลงชัดเจนในวันนี้")
         st.divider()
+
+else:
+    st.error("🚨 ไม่สามารถดึงข้อมูลจาก Yahoo Finance ได้ในขณะนี้ (เซิร์ฟเวอร์ Streamlit Cloud อาจโดนบล็อก IP ชั่วคราว) กรุณารอสักครู่แล้วกดรีเฟรชหน้าจอใหม่อีกครั้ง")
