@@ -309,13 +309,44 @@ def fetch_stock_data(ticker, period="1y"):
 @st.cache_data(ttl=3600)
 def get_advanced_stock_data(tickers):
     data_list = []
-    # 🌟 เพิ่ม session=session เข้าไป
-    df_history = yf.download(tickers, period="1y", group_by='ticker', progress=False, threads=False, session=custom_session)
-    df_history_h1 = yf.download(tickers, period="5d", interval="1h", group_by='ticker', progress=False, threads=False, session=custom_session)
     progress_bar = st.progress(0)
     status_text = st.empty()
     now_ts = time.time()
     today_date = datetime.today().date()
+    
+    # ==========================================
+    # 🌟 เทคนิคหลบการบล็อก: แบ่งโหลด (Chunking) 
+    # ==========================================
+    df_history_list = []
+    df_history_h1_list = []
+    chunk_size = 30 # ดึงข้อมูลทีละ 30 ตัว
+    
+    for i in range(0, len(tickers), chunk_size):
+        chunk = tickers[i:i + chunk_size]
+        status_text.text(f"กำลังเชื่อมต่อตลาด (เทคนิคหลบการบล็อก): กลุ่มที่ {(i//chunk_size)+1} / {(len(tickers)//chunk_size)+1}")
+        progress_bar.progress((i) / len(tickers))
+        
+        try:
+            # ดึงข้อมูลทีละกลุ่มย่อย พร้อมแนบหน้ากาก custom_session
+            chunk_hist = yf.download(chunk, period="1y", group_by='ticker', progress=False, threads=False, session=custom_session)
+            chunk_h1 = yf.download(chunk, period="5d", interval="1h", group_by='ticker', progress=False, threads=False, session=custom_session)
+            
+            if not chunk_hist.empty: 
+                df_history_list.append(chunk_hist)
+            if not chunk_h1.empty: 
+                df_history_h1_list.append(chunk_h1)
+        except Exception as e:
+            pass
+            
+        time.sleep(1.5) # ⏳ พักหายใจ 1.5 วินาที เพื่อไม่ให้ Yahoo จับได้ว่ายิงรัว
+        
+    # รวมก้อนข้อมูลทั้งหมดเข้าด้วยกัน
+    if not df_history_list:
+        progress_bar.empty(); status_text.empty()
+        return pd.DataFrame() # คืนค่าตารางว่างถ้าโดนบล็อกหมด
+        
+    df_history = pd.concat(df_history_list, axis=1)
+    df_history_h1 = pd.concat(df_history_h1_list, axis=1)
     
     for i, ticker in enumerate(tickers):
         symbol = ticker.replace('.BK', '')
